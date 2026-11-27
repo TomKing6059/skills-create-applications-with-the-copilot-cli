@@ -8,11 +8,46 @@
  *   -  Subtraction
  *   *  Multiplication
  *   /  Division
+ *   %  Remainder
+ *   ** Exponentiation
+ *   sqrt Square root
  *
  * Usage:
  *   node src/calculator.js <number> <operator> <number>
+ *   node src/calculator.js sqrt <number>
  *   node src/calculator.js 12 + 3
  */
+
+function modulo(a, b) {
+  if (!Number.isFinite(a) || !Number.isFinite(b)) {
+    throw new Error('Operands must be finite numbers.');
+  }
+  if (b === 0) {
+    throw new Error('Cannot calculate remainder with a zero divisor.');
+  }
+  return a % b;
+}
+
+function power(base, exponent) {
+  if (!Number.isFinite(base) || !Number.isFinite(exponent)) {
+    throw new Error('Operands must be finite numbers.');
+  }
+  const result = base ** exponent;
+  if (!Number.isFinite(result)) {
+    throw new Error('Power result must be a finite real number.');
+  }
+  return result;
+}
+
+function squareRoot(n) {
+  if (!Number.isFinite(n)) {
+    throw new Error('Operand must be a finite number.');
+  }
+  if (n < 0) {
+    throw new Error('Cannot calculate the square root of a negative number.');
+  }
+  return Math.sqrt(n);
+}
 
 const OPERATIONS = {
   '+': (left, right) => left + right,
@@ -25,11 +60,14 @@ const OPERATIONS = {
 
     return left / right;
   },
+  '%': modulo,
+  '**': power,
+  sqrt: squareRoot,
 };
 
 function calculate(left, operator, right) {
   if (!Object.hasOwn(OPERATIONS, operator)) {
-    throw new Error(`Unsupported operation "${operator}". Use +, -, *, or /.`);
+    throw new Error(`Unsupported operation "${operator}". Use +, -, *, /, %, **, or sqrt.`);
   }
 
   return OPERATIONS[operator](left, right);
@@ -50,10 +88,20 @@ function parseNumber(value, name) {
 }
 
 function main(args) {
+  if (args.length === 2 && args[0] === 'sqrt') {
+    const operand = parseNumber(args[1], 'The operand');
+    console.log(calculate(operand, 'sqrt'));
+    return;
+  }
+
   if (args.length !== 3) {
     throw new Error(
-      'Usage: node src/calculator.js <number> <operator> <number>',
+      'Usage: node src/calculator.js <number> <operator> <number> or node src/calculator.js sqrt <number>',
     );
+  }
+
+  if (args[1] === 'sqrt') {
+    throw new Error('Square root requires exactly one operand: sqrt <number>.');
   }
 
   const left = parseNumber(args[0], 'The first operand');
@@ -72,4 +120,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { calculate, main, parseNumber };
+module.exports = { calculate, main, parseNumber, modulo, power, squareRoot };
