@@ -1,7 +1,10 @@
 const {
   calculate,
   main,
+  modulo,
   parseNumber,
+  power,
+  squareRoot,
 } = require('../calculator');
 
 describe('calculate', () => {
@@ -11,6 +14,8 @@ describe('calculate', () => {
       ['subtraction', 10, '-', 4, 6],
       ['multiplication', 45, '*', 2, 90],
       ['division', 20, '/', 5, 4],
+      ['modulo', 5, '%', 2, 1],
+      ['power', 2, '^', 3, 8],
     ])('%s', (_operation, left, operator, right, expected) => {
       expect(calculate(left, operator, right)).toBe(expected);
     });
@@ -27,8 +32,32 @@ describe('calculate', () => {
   });
 
   test('throws for unsupported operations', () => {
-    expect(() => calculate(2, '%', 3)).toThrow(
-      'Unsupported operation "%". Use +, -, *, or /.',
+    expect(() => calculate(2, '&', 3)).toThrow(
+      'Unsupported operation "&". Use +, -, *, /, %, or ^.',
+    );
+  });
+});
+
+describe('additional operations', () => {
+  test('modulo returns the remainder', () => {
+    expect(modulo(5, 2)).toBe(1);
+  });
+
+  test('modulo rejects a zero divisor', () => {
+    expect(() => modulo(17, 0)).toThrow('Cannot calculate modulo by zero.');
+  });
+
+  test('power raises a base to an exponent', () => {
+    expect(power(2, 3)).toBe(8);
+  });
+
+  test('square root returns the root of a non-negative number', () => {
+    expect(squareRoot(16)).toBe(4);
+  });
+
+  test('square root rejects negative numbers', () => {
+    expect(() => squareRoot(-1)).toThrow(
+      'Cannot calculate the square root of a negative number.',
     );
   });
 });
@@ -65,6 +94,8 @@ describe('main', () => {
     [['10', '-', '4'], 6],
     [['45', '*', '2'], 90],
     [['20', '/', '5'], 4],
+    [['5', '%', '2'], 1],
+    [['2', '^', '3'], 8],
   ])('prints the result for %j', (args, expected) => {
     main(args);
 

@@ -8,11 +8,33 @@
  *   -  Subtraction
  *   *  Multiplication
  *   /  Division
+ *   %  Modulo
+ *   ^  Exponentiation
  *
  * Usage:
  *   node src/calculator.js <number> <operator> <number>
  *   node src/calculator.js 12 + 3
  */
+
+function modulo(a, b) {
+  if (b === 0) {
+    throw new Error('Cannot calculate modulo by zero.');
+  }
+
+  return a % b;
+}
+
+function power(base, exponent) {
+  return base ** exponent;
+}
+
+function squareRoot(n) {
+  if (n < 0) {
+    throw new Error('Cannot calculate the square root of a negative number.');
+  }
+
+  return Math.sqrt(n);
+}
 
 const OPERATIONS = {
   '+': (left, right) => left + right,
@@ -25,11 +47,15 @@ const OPERATIONS = {
 
     return left / right;
   },
+  '%': modulo,
+  '^': power,
 };
 
 function calculate(left, operator, right) {
   if (!Object.hasOwn(OPERATIONS, operator)) {
-    throw new Error(`Unsupported operation "${operator}". Use +, -, *, or /.`);
+    throw new Error(
+      `Unsupported operation "${operator}". Use +, -, *, /, %, or ^.`,
+    );
   }
 
   return OPERATIONS[operator](left, right);
@@ -72,4 +98,11 @@ if (require.main === module) {
   }
 }
 
-module.exports = { calculate, main, parseNumber };
+module.exports = {
+  calculate,
+  main,
+  modulo,
+  parseNumber,
+  power,
+  squareRoot,
+};
